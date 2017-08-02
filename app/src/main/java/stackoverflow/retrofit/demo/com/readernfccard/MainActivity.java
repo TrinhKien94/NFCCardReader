@@ -6,6 +6,7 @@ import android.nfc.Tag;
 import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
@@ -17,6 +18,17 @@ import stackoverflow.retrofit.demo.com.readernfccard.model.Card;
 public class MainActivity extends AppCompatActivity {
 
     private CardListAdapter adapter;
+    final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        int v;
+        for ( int j = 0; j < bytes.length; j++ ) {
+            v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +53,18 @@ public class MainActivity extends AppCompatActivity {
         byte[] felicaIDm;
         Intent intent = getIntent();
         Tag nfcTag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+//        Log.i("")
         if(nfcTag != null) {
             felicaIDm = nfcTag.getId();
-
+            String [] test = nfcTag.getTechList();
+            Log.i("NFCTYPE",test[0]);
+//            for(String t : test){
+//                Log.i("Test",t);
+//            }
+            Log.i("test",bytesToHex(nfcTag.getId()));
+            Log.i("tagID",nfcTag.getId().hashCode()+"");
+            Log.i("tagID",nfcTag.getId().toString());
+            Log.i("tag", String.valueOf(nfcTag.describeContents()));
             Toast.makeText(this, "ID Card " + felicaIDm, Toast.LENGTH_LONG).show();
 
         }else {
